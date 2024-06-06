@@ -1,8 +1,6 @@
 """
-Author: Zubin Bhuyan
-Date: June 21, 2023
-
-MIT License
+Author: RikuNav
+Date: June 5, 2024
 
 """
 

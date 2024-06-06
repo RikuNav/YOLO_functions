@@ -5,21 +5,29 @@ from ultralytics import YOLO
 import numpy as np
 import matplotlib.pyplot as plt
 
-model = YOLO('best.pt')
-device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-model.to('cpu')
 
-with torch.no_grad():
-    img = cv2.imread('image.jpg')
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    results = model(img)
+def main():
+    model = YOLO('best.pt')
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    model.to(device)
 
-    for r in results:
-        image = r.plot(boxes=None)
-        probs = r.probs
-        plt.imshow(image)
-        plt.show()
+    frame = cv2.VideoCapture(0)
 
-    # cv2.imshow('image', image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    while True:
+        _, origin = frame.read()
+        #img = cv2.cvtColor(origin, cv2.COLOR_BGR2RGB)
+        results = model(origin)
+
+        image = results[0].cpu().plot(boxes=None)
+        probs = results[0].probs
+        cv2.imshow('YOLOv8 Inference', image)
+        cv2.imshow('Original', origin)
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+        
+    frame.release()
+    cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    main()
